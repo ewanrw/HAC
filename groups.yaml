@@ -1,0 +1,5 @@
+loungeroom_lights:
+  name: Loungeroom Lights
+  entities:
+    - light.yeelight_rgb_34ce008b6a23
+    - light.yeelight_rgb_34ce00901079

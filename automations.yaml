@@ -1,0 +1,151 @@
+
+- alias: Startup Notification
+  trigger:
+    platform: homeassistant
+    event: start
+  action:
+    service: ifttt.trigger
+    data:
+      event: HA_generic
+      value1: HA Started
+##### Lounge room
+
+#### TV/Soundbar
+- alias: Turn on entertainment system
+  trigger:
+    platform: event
+    event_type: click
+    event_data:
+      entity_id: binary_sensor.switch_158d0001e114cd
+      click_type: single
+  action:
+    service: script.turn_on
+    entity_id: script.entertainment_on
+
+    
+- alias: Toggle loungeroom lights on double click
+  trigger:
+    platform: event
+    event_type: click
+    event_data:
+      entity_id: binary_sensor.switch_158d0001e114cd
+      click_type: double
+  action:
+    service: light.toggle
+    entity_id: group.loungeroom_lights
+    
+    
+    
+##### Study    
+    
+- alias: Toggle server on long button press
+  trigger:
+    platform: event
+    event_type: click
+    event_data:
+      entity_id: binary_sensor.switch_158d0001e114cd
+      click_type: long_click_press
+  action:
+    service: switch.toggle
+    entity_id: switch.trantor
+
+##### Garage/ Outside
+
+
+- alias: Water plants on hot days with no rain
+  id: '1514888782639'
+  trigger:
+  - platform: time 
+    at: '17:00'
+  condition:
+    condition: and
+    conditions:
+      - condition: numeric_state
+        below: '1.5'
+        entity_id: sensor.bom_rain_today
+      - condition: numeric_state
+        above: '23'
+        entity_id: sensor.bom_air_temp_c
+  action:
+    service: ifttt.trigger
+    data_template:
+      event: HA_generic
+      value1: "Water plants! {{ states.sensor.bom_rain_today.state }} rain today and it's {{ states.sensor.bom_air_temp_c.state }} degrees! "
+
+
+- alias: Door opened IFTTT
+  trigger:
+    platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001a9b3c3
+    from: 'off'
+    to: 'on'
+  action:
+    service: ifttt.trigger
+    data:
+      event: HA_generic
+      value1: Door opened
+      
+- alias: Door closed IFTTT
+  trigger:
+    platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001a9b3c3
+    from: 'on'
+    to: 'off'
+  action:
+    service: ifttt.trigger
+    data:
+      event: HA_generic
+      value1: Door closed
+
+##### Stairs 
+
+- alias: If there is motion send notification
+  trigger:
+    platform: state
+    entity_id: binary_sensor.motion_sensor_158d0001ae984b
+    from: 'off'
+    to: 'on'
+  action:
+    service: ifttt.trigger
+    data:
+      event: HA_generic
+      value1: Motion detected
+
+- alias: If there is motion and its dark turn on the study light
+  trigger:
+    platform: state
+    entity_id: binary_sensor.motion_sensor_158d0001ae984b
+    from: 'off'
+    to: 'on'
+  condition:
+    condition: and
+    conditions:
+      - condition: numeric_state
+        entity_id: sensor.illumination_286c07f1bae2
+        below: 300
+      - condition: state
+        entity_id: light.yeelight_rgb_34ce008bb842
+        state: 'off'
+  action:
+  - service: light.turn_on
+    entity_id: light.yeelight_rgb_34ce008bb842
+    data:
+      brightness: 50
+  - service: automation.turn_on
+    data:
+      entity_id: automation.if_there_no_motion_for_5_minutes_turn_off_the_study_light
+- alias: If there no motion for 5 minutes turn off the study light
+  initial_state: false
+  trigger:
+    platform: state
+    entity_id: binary_sensor.motion_sensor_158d0001ae984b
+    from: 'on'
+    to: 'off'
+    for:
+      minutes: 5
+  action:
+  - service: light.turn_off
+    entity_id: light.yeelight_rgb_34ce008bb842
+  - service: automation.turn_off
+    data:
+      entity_id: automation.if_there_no_motion_for_5_minutes_turn_off_the_study_light

@@ -1,0 +1,68 @@
+scene_white:
+    alias: White loungeroom
+    sequence:
+      - service: scene.turn_on
+        data:
+          entity_id: scene.white_loungeroom
+
+entertainment_on:
+  alias: "TV and soundbar on"
+  sequence:
+  - service: script.turn_on
+    data:
+      entity_id: script.kogan_power
+  - delay: 00:00:01
+  - service: script.turn_on
+    data:
+      entity_id: script.soundbar_power
+  - delay: 00:00:05
+  - service: script.turn_on
+    data:
+        entity_id : script.soundbar_volup   
+  - delay: 00:00:01
+  - service: script.turn_on
+    data:
+        entity_id : script.soundbar_volup
+  - delay: 00:00:01
+  - service: script.turn_on
+    data:
+        entity_id : script.soundbar_volup
+
+kogan_power:
+  alias: "Kogan power toggle"
+  sequence:
+    service: broadlink.send_packet_10_1_1_210
+    data:
+      packet:
+      - JgBQAAABKZAVEBUQFTQVEBUQFREUERQRFDUUNRUQFTUUNRQ1FTQVNRQRFBEUERQ1FRAVEBUQFRAVNRQ1FDUTEhU1FDUUNRU1EgAFFgABKUYVAA0FAAAAAAAAAAA
+
+soundbar_power:
+  alias: "Soundbar power toggle"
+  sequence:
+    service: broadlink.send_packet_10_1_1_210
+    data:
+      packet:
+      - JgCgAJSTEw4TDhMOEw4SLxMvFA0TDhMvEy4ULhQuFA0UDRQNEw0UkBQNFA0UDRQNFA0UDRQNEw4TLhMvEy8TDhMvEi8RMRExERAREBEQETARAAcYl5AUDRQNEw4TDhMvEy4UDRQNFC4TLxMvEy4UDRQNEw4TDhORFA0TDhMOEw0UDRQNFA0TDhMvEy8TLhQNFC4TLxMvEy4UDRQNEw4TLxMADQUAAAAAAAAAAA==
+
+soundbar_voldown:
+  alias: "Soundbar volume down"
+  sequence:
+    service: broadlink.send_packet_10_1_1_210
+    data:
+      packet:
+      - JgCgAJeQFA0TDhMOEw4TLxMuFA0UDRMvEy8TLhQuEw4TDhMOEw4TkRMOEw4TDRQNEw4TDhMOEy8TLhQuEy8TDhMvEy4ULhMOEw4TDhMOEy4UAAcVl5AUDRMOEw4TDhMvEy8TDhMNEy8TLxMvEy4UDRMOEw4TDhOREw4TDhMOEw4TDhMNEw4TLxMvEy4ULhMOEy8TLxMvEw0TDhMOEw4TLxMADQUAAAAAAAAAAA==
+    
+soundbar_volup:
+  alias: "Soundbar volume up"
+  sequence:
+    service: broadlink.send_packet_10_1_1_210
+    data:
+      packet:
+      - JgCgAJeQFA0UDRQNFA0TLhQuFA0UDRQuEy4ULhQuFA0UDRMOEw4TkBQNFA0UDRQNFC4ULhMuFA0ULhQuFC0UDRQNFA0UDRQuFA0UDRMOEy4UAAcVl5AUDRQNFA0UDRQuEy4UDRQNFC4ULhQtFC4UDRQNFA0UDRSQFAwUDRQNFA0ULhQuFC0UDRQuFC4ULhQNEw0TDhQNFC4UDRQNFA0TLxMADQUAAAAAAAAAAA==
+
+
+restart_ha:
+  alias: '!!!Restart HomeAssistant'
+  sequence:
+    - alias: Restart HA
+      service: homeassistant.restart
